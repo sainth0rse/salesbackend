@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { ExecutionContext } from '@nestjs/common';
-import { Request } from 'express'; // Восстанавливаем для типизации
+import { Request } from 'express';
 import { ProductsService } from '../products/products.service';
 import { StoresService } from '../stores/stores.service';
 import { StoreProductsService } from '../store-products/store-products.service';
@@ -16,11 +16,7 @@ interface JwtPayload {
 }
 
 // Определяем типы сущностей
-type EntityType =
-  | 'product'
-  | 'store'
-  | 'store_product'
-  | 'product_custom_field';
+type EntityType = 'product' | 'store' | 'store_product' | 'product_custom_field';
 
 @Injectable()
 export class OwnershipGuard extends AuthGuard('jwt') {
@@ -40,22 +36,19 @@ export class OwnershipGuard extends AuthGuard('jwt') {
       return false;
     }
 
-    const request = context.switchToHttp().getRequest(); // Явно типизируем как Request
+    const request = context.switchToHttp().getRequest() as Request;
     const user = request.user as JwtPayload | undefined;
 
     if (!user) {
       return false;
     }
 
-    const entityId = request.params.id; // Явно типизируем как string
+    const entityId = request.params.id as string;
     if (!entityId) {
       return false;
     }
 
-    const entityType = this.reflector.get<EntityType>(
-      'entityType',
-      context.getHandler(),
-    );
+    const entityType = this.reflector.get<EntityType>('entityType', context.getHandler());
     if (!entityType) {
       return false;
     }

@@ -1,11 +1,13 @@
 import { Repository } from 'typeorm';
 import { Store } from './entities/store.entity';
+import { User } from '../users/entities/user.entity';
 export declare class StoresService {
     private storesRepository;
-    constructor(storesRepository: Repository<Store>);
+    private usersRepository;
+    constructor(storesRepository: Repository<Store>, usersRepository: Repository<User>);
     findAll(): Promise<Store[]>;
     findOne(id: number): Promise<Store>;
-    create(store: Partial<Store>): Promise<Store>;
-    update(id: number, store: Partial<Store>): Promise<Store>;
-    remove(id: number): Promise<void>;
+    create(storeData: Partial<Store>, userId: number): Promise<Store>;
+    update(id: number, storeData: Partial<Store>, userId: number): Promise<Store>;
+    remove(id: number, userId: number): Promise<void>;
 }

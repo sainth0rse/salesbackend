@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
-import { StoresModule } from './stores/stores.module';
+import { StoresModule } from './stores/stores.module'; // Исправляем импорт
 import { StoreProductsModule } from './store-products/store-products.module';
 import { ProductCustomFieldsModule } from './product-custom-fields/product-custom-fields.module';
 import { AuthModule } from './auth/auth.module';
@@ -24,7 +24,7 @@ import { UsersModule } from './users/users.module';
       synchronize: true, // Отключить в продакшене
     }),
     ProductsModule,
-    StoresModule,
+    StoresModule, // Используем исправленный импорт
     StoreProductsModule,
     ProductCustomFieldsModule,
     AuthModule,

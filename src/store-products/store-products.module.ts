@@ -8,6 +8,6 @@ import { StoreProductsController } from './store-products.controller';
   imports: [TypeOrmModule.forFeature([StoreProduct])],
   providers: [StoreProductsService],
   controllers: [StoreProductsController],
-  exports: [TypeOrmModule],
+  exports: [StoreProductsService], // Экспортируем сервис
 })
 export class StoreProductsModule {}

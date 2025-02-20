@@ -17,29 +17,31 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const store_entity_1 = require("./entities/store.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let StoresService = class StoresService {
-    constructor(storesRepository) {
+    constructor(storesRepository, usersRepository) {
         this.storesRepository = storesRepository;
+        this.usersRepository = usersRepository;
     }
     async findAll() {
-        return this.storesRepository.find();
+        return this.storesRepository.find({ relations: ['createdBy'] });
     }
     async findOne(id) {
-        const store = await this.storesRepository.findOneBy({ id });
-        if (!store) {
-            throw new common_1.NotFoundException(`Store with ID ${id} not found`);
-        }
-        return store;
+        return this.storesRepository.findOneOrFail({ where: { id }, relations: ['createdBy'] });
     }
-    async create(store) {
-        const newStore = this.storesRepository.create(store);
-        return this.storesRepository.save(newStore);
+    async create(storeData, userId) {
+        const user = await this.usersRepository.findOneOrFail({ where: { id: userId } });
+        const store = this.storesRepository.create({ ...storeData, createdBy: user });
+        return this.storesRepository.save(store);
     }
-    async update(id, store) {
-        await this.storesRepository.update(id, store);
-        return this.findOne(id);
+    async update(id, storeData, userId) {
+        const store = await this.findOne(id);
+        const user = await this.usersRepository.findOneOrFail({ where: { id: userId } });
+        Object.assign(store, storeData, { createdBy: user });
+        return this.storesRepository.save(store);
     }
-    async remove(id) {
+    async remove(id, userId) {
+        const store = await this.findOne(id);
         await this.storesRepository.delete(id);
     }
 };
@@ -47,6 +49,8 @@ exports.StoresService = StoresService;
 exports.StoresService = StoresService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(store_entity_1.Store)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], StoresService);
 //# sourceMappingURL=stores.service.js.map

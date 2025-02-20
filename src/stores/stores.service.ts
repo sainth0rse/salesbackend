@@ -1,38 +1,41 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Store } from './entities/store.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class StoresService {
   constructor(
     @InjectRepository(Store)
     private storesRepository: Repository<Store>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
 
   async findAll(): Promise<Store[]> {
-    return this.storesRepository.find();
+    return this.storesRepository.find({ relations: ['createdBy'] });
   }
 
   async findOne(id: number): Promise<Store> {
-    const store = await this.storesRepository.findOneBy({ id });
-    if (!store) {
-      throw new NotFoundException(`Store with ID ${id} not found`);
-    }
-    return store;
+    return this.storesRepository.findOneOrFail({ where: { id }, relations: ['createdBy'] });
   }
 
-  async create(store: Partial<Store>): Promise<Store> {
-    const newStore = this.storesRepository.create(store);
-    return this.storesRepository.save(newStore);
+  async create(storeData: Partial<Store>, userId: number): Promise<Store> {
+    const user = await this.usersRepository.findOneOrFail({ where: { id: userId } });
+    const store = this.storesRepository.create({ ...storeData, createdBy: user });
+    return this.storesRepository.save(store);
   }
 
-  async update(id: number, store: Partial<Store>): Promise<Store> {
-    await this.storesRepository.update(id, store);
-    return this.findOne(id); // Повторно вызываем findOne, чтобы вернуть обновленный объект
+  async update(id: number, storeData: Partial<Store>, userId: number): Promise<Store> {
+    const store = await this.findOne(id);
+    const user = await this.usersRepository.findOneOrFail({ where: { id: userId } });
+    Object.assign(store, storeData, { createdBy: user });
+    return this.storesRepository.save(store);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number, userId: number): Promise<void> {
+    const store = await this.findOne(id);
     await this.storesRepository.delete(id);
   }
 }

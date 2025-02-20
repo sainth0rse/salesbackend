@@ -8,6 +8,6 @@ import { ProductCustomFieldsController } from './product-custom-fields.controlle
   imports: [TypeOrmModule.forFeature([ProductCustomField])],
   providers: [ProductCustomFieldsService],
   controllers: [ProductCustomFieldsController],
-  exports: [TypeOrmModule],
+  exports: [ProductCustomFieldsService], // Экспортируем сервис
 })
 export class ProductCustomFieldsModule {}

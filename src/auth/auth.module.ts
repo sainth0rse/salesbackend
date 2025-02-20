@@ -27,7 +27,7 @@ import { ProductCustomFieldsModule } from '../product-custom-fields/product-cust
     }),
     ConfigModule,
     ProductsModule,
-    StoresModule,
+    StoresModule, // Уже импортирован
     StoreProductsModule,
     ProductCustomFieldsModule,
   ],

@@ -20,7 +20,7 @@ exports.StoreProductsModule = StoreProductsModule = __decorate([
         imports: [typeorm_1.TypeOrmModule.forFeature([store_product_entity_1.StoreProduct])],
         providers: [store_products_service_1.StoreProductsService],
         controllers: [store_products_controller_1.StoreProductsController],
-        exports: [typeorm_1.TypeOrmModule],
+        exports: [store_products_service_1.StoreProductsService],
     })
 ], StoreProductsModule);
 //# sourceMappingURL=store-products.module.js.map

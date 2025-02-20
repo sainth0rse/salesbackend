@@ -20,7 +20,7 @@ exports.ProductCustomFieldsModule = ProductCustomFieldsModule = __decorate([
         imports: [typeorm_1.TypeOrmModule.forFeature([product_custom_field_entity_1.ProductCustomField])],
         providers: [product_custom_fields_service_1.ProductCustomFieldsService],
         controllers: [product_custom_fields_controller_1.ProductCustomFieldsController],
-        exports: [typeorm_1.TypeOrmModule],
+        exports: [product_custom_fields_service_1.ProductCustomFieldsService],
     })
 ], ProductCustomFieldsModule);
 //# sourceMappingURL=product-custom-fields.module.js.map
