@@ -1,0 +1,32 @@
+# Node modules
+node_modules/
+
+# Типовые каталоги сборки (Nest CLI / TypeScript)
+dist/
+build/
+out/
+
+# Логи
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Файлы окружения
+.env
+.env.*
+# (Если у вас есть .env.example, .env.template и т.п. — их обычно НЕ игнорируют, чтобы коллеги видели пример)
+
+# Файлы, создаваемые TypeScript (хранят кэш компиляции)
+*.tsbuildinfo
+
+# Покрытие тестов (coverage)
+coverage/
+
+# Настройки редакторов/IDE (если не хотите коммитить их)
+.vscode/
+.idea/
+
+# Иногда бывает .nest-cli.json — его можно игнорировать, если он генерируется автоматически
+.nest-cli.json
