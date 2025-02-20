@@ -5,7 +5,7 @@ export declare class ProductsController {
     constructor(productsService: ProductsService);
     findAll(): Promise<Product[]>;
     findOne(id: string): Promise<Product>;
-    create(product: Partial<Product>, req: any): Promise<Product>;
-    update(id: string, product: Partial<Product>, req: any): Promise<Product>;
-    remove(id: string, req: any): Promise<void>;
+    create(product: Partial<Product>, req: Request): Promise<Product>;
+    update(id: string, product: Partial<Product>, req: Request): Promise<Product>;
+    remove(id: string, req: Request): Promise<void>;
 }

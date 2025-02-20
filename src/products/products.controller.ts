@@ -13,7 +13,12 @@ import {
 import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { OwnershipGuard } from '../auth/ownership.guard';
+import { OwnershipGuard } from '../ownership/ownership.guard';
+
+// Опционально: если нужно явно типизировать, добавляем интерфейс
+interface ExpressRequest extends Request {
+  user: { id: number };
+}
 
 @Controller('products')
 @UseGuards(JwtAuthGuard)
@@ -31,28 +36,31 @@ export class ProductsController {
   }
 
   @Post()
-  create(@Body() product: Partial<Product>, @Request() req): Promise<Product> {
-    const user = req.user as { id: number };
+  create(
+    @Body() product: Partial<Product>,
+    @Request() req: Request,
+  ): Promise<Product> {
+    const user = (req as ExpressRequest).user;
     return this.productsService.create(product, user.id);
   }
 
   @Put(':id')
-  @UseGuards(OwnershipGuard as any) // Временный каст для устранения предупреждений
+  @UseGuards(OwnershipGuard)
   @SetMetadata('entityType', 'product')
   update(
     @Param('id') id: string,
     @Body() product: Partial<Product>,
-    @Request() req,
+    @Request() req: Request,
   ): Promise<Product> {
-    const user = req.user as { id: number };
+    const user = (req as ExpressRequest).user;
     return this.productsService.update(+id, product, user.id);
   }
 
   @Delete(':id')
-  @UseGuards(OwnershipGuard as any) // Временный каст для устранения предупреждений
+  @UseGuards(OwnershipGuard)
   @SetMetadata('entityType', 'product')
-  remove(@Param('id') id: string, @Request() req): Promise<void> {
-    const user = req.user as { id: number };
+  remove(@Param('id') id: string, @Request() req: Request): Promise<void> {
+    const user = (req as ExpressRequest).user;
     return this.productsService.remove(+id, user.id);
   }
 }

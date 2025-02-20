@@ -16,7 +16,7 @@ exports.ProductsController = void 0;
 const common_1 = require("@nestjs/common");
 const products_service_1 = require("./products.service");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
-const ownership_guard_1 = require("../auth/ownership.guard");
+const ownership_guard_1 = require("../ownership/ownership.guard");
 let ProductsController = class ProductsController {
     constructor(productsService) {
         this.productsService = productsService;

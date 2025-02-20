@@ -12,12 +12,18 @@ const typeorm_1 = require("@nestjs/typeorm");
 const product_custom_field_entity_1 = require("./entities/product-custom-field.entity");
 const product_custom_fields_service_1 = require("./product-custom-fields.service");
 const product_custom_fields_controller_1 = require("./product-custom-fields.controller");
+const users_module_1 = require("../users/users.module");
+const product_entity_1 = require("../products/entities/product.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let ProductCustomFieldsModule = class ProductCustomFieldsModule {
 };
 exports.ProductCustomFieldsModule = ProductCustomFieldsModule;
 exports.ProductCustomFieldsModule = ProductCustomFieldsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([product_custom_field_entity_1.ProductCustomField])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([product_custom_field_entity_1.ProductCustomField, product_entity_1.Product, user_entity_1.User]),
+            users_module_1.UsersModule,
+        ],
         providers: [product_custom_fields_service_1.ProductCustomFieldsService],
         controllers: [product_custom_fields_controller_1.ProductCustomFieldsController],
         exports: [product_custom_fields_service_1.ProductCustomFieldsService],

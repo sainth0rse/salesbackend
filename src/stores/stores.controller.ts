@@ -13,7 +13,12 @@ import {
 import { StoresService } from './stores.service';
 import { Store } from './entities/store.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { OwnershipGuard } from '../auth/ownership.guard';
+import { OwnershipGuard } from '../ownership/ownership.guard';
+
+// Опционально: если нужно явно типизировать, добавляем интерфейс
+interface ExpressRequest extends Request {
+  user: { id: number };
+}
 
 @Controller('stores')
 @UseGuards(JwtAuthGuard)
@@ -31,8 +36,11 @@ export class StoresController {
   }
 
   @Post()
-  create(@Body() store: Partial<Store>, @Request() req): Promise<Store> {
-    const user = req.user as { id: number }; // Получаем id пользователя из JWT
+  create(
+    @Body() store: Partial<Store>,
+    @Request() req: Request,
+  ): Promise<Store> {
+    const user = (req as ExpressRequest).user;
     return this.storesService.create(store, user.id);
   }
 
@@ -42,17 +50,17 @@ export class StoresController {
   update(
     @Param('id') id: string,
     @Body() store: Partial<Store>,
-    @Request() req,
+    @Request() req: Request,
   ): Promise<Store> {
-    const user = req.user as { id: number };
+    const user = (req as ExpressRequest).user;
     return this.storesService.update(+id, store, user.id);
   }
 
   @Delete(':id')
   @UseGuards(OwnershipGuard)
   @SetMetadata('entityType', 'store')
-  remove(@Param('id') id: string, @Request() req): Promise<void> {
-    const user = req.user as { id: number };
+  remove(@Param('id') id: string, @Request() req: Request): Promise<void> {
+    const user = (req as ExpressRequest).user;
     return this.storesService.remove(+id, user.id);
   }
 }

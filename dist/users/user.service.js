@@ -17,9 +17,17 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./entities/user.entity");
+const product_custom_field_entity_1 = require("../product-custom-fields/entities/product-custom-field.entity");
+const product_entity_1 = require("../products/entities/product.entity");
+const store_entity_1 = require("../stores/entities/store.entity");
+const store_product_entity_1 = require("../store-products/entities/store-product.entity");
 let UsersService = class UsersService {
-    constructor(usersRepository) {
+    constructor(usersRepository, customFieldsRepository, productsRepository, storesRepository, storeProductsRepository) {
         this.usersRepository = usersRepository;
+        this.customFieldsRepository = customFieldsRepository;
+        this.productsRepository = productsRepository;
+        this.storesRepository = storesRepository;
+        this.storeProductsRepository = storeProductsRepository;
     }
     async findAll(currentUserId) {
         const user = await this.usersRepository.findOneOrFail({
@@ -69,6 +77,11 @@ let UsersService = class UsersService {
         if (currentUser.role !== 'admin') {
             throw new common_1.UnauthorizedException('Only admin can delete users');
         }
+        await this.customFieldsRepository.delete({ createdBy: { id } });
+        await this.productsRepository.delete({ createdBy: { id } });
+        await this.storesRepository.delete({ createdBy: { id } });
+        await this.storeProductsRepository.delete({ createdBy: { id } });
+        console.log(`Deleting user with ID ${userToDelete.id}`);
         await this.usersRepository.delete(id);
     }
 };
@@ -76,6 +89,14 @@ exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(product_custom_field_entity_1.ProductCustomField)),
+    __param(2, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
+    __param(3, (0, typeorm_1.InjectRepository)(store_entity_1.Store)),
+    __param(4, (0, typeorm_1.InjectRepository)(store_product_entity_1.StoreProduct)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository])
 ], UsersService);
 //# sourceMappingURL=user.service.js.map

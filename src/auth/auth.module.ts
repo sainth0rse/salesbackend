@@ -1,3 +1,4 @@
+// auth.module.ts
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
@@ -8,11 +9,8 @@ import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from '../users/users.module';
 import { RolesGuard } from './roles.guard';
-import { OwnershipGuard } from './ownership.guard';
-import { ProductsModule } from '../products/products.module';
-import { StoresModule } from '../stores/stores.module';
-import { StoreProductsModule } from '../store-products/store-products.module';
-import { ProductCustomFieldsModule } from '../product-custom-fields/product-custom-fields.module';
+// Убираем import { OwnershipGuard } from './ownership.guard';
+// И также убираем ProductsModule, StoresModule и т.д. — они не нужны, если AuthService их не использует
 
 @Module({
   imports: [
@@ -26,12 +24,13 @@ import { ProductCustomFieldsModule } from '../product-custom-fields/product-cust
       inject: [ConfigService],
     }),
     ConfigModule,
-    ProductsModule,
-    StoresModule, // Уже импортирован
-    StoreProductsModule,
-    ProductCustomFieldsModule,
   ],
-  providers: [AuthService, JwtStrategy, RolesGuard, OwnershipGuard],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    RolesGuard,
+    // OwnershipGuard — удалили
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

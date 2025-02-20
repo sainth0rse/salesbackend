@@ -18,6 +18,7 @@ const store_products_module_1 = require("./store-products/store-products.module"
 const product_custom_fields_module_1 = require("./product-custom-fields/product-custom-fields.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
+const ownership_module_1 = require("./ownership/ownership.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -41,6 +42,7 @@ exports.AppModule = AppModule = __decorate([
             product_custom_fields_module_1.ProductCustomFieldsModule,
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
+            ownership_module_1.OwnershipModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

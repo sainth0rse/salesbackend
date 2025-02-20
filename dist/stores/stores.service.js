@@ -27,21 +27,37 @@ let StoresService = class StoresService {
         return this.storesRepository.find({ relations: ['createdBy'] });
     }
     async findOne(id) {
-        return this.storesRepository.findOneOrFail({ where: { id }, relations: ['createdBy'] });
+        return this.storesRepository.findOneOrFail({
+            where: { id },
+            relations: ['createdBy'],
+        });
     }
     async create(storeData, userId) {
-        const user = await this.usersRepository.findOneOrFail({ where: { id: userId } });
-        const store = this.storesRepository.create({ ...storeData, createdBy: user });
+        const user = await this.usersRepository.findOneOrFail({
+            where: { id: userId },
+        });
+        const store = this.storesRepository.create({
+            ...storeData,
+            createdBy: user,
+        });
         return this.storesRepository.save(store);
     }
     async update(id, storeData, userId) {
         const store = await this.findOne(id);
-        const user = await this.usersRepository.findOneOrFail({ where: { id: userId } });
+        const user = await this.usersRepository.findOneOrFail({
+            where: { id: userId },
+        });
         Object.assign(store, storeData, { createdBy: user });
         return this.storesRepository.save(store);
     }
     async remove(id, userId) {
         const store = await this.findOne(id);
+        if (!store.createdBy) {
+            throw new common_1.ForbiddenException('Store has no owner — cannot delete');
+        }
+        if (store.createdBy.id !== userId) {
+            throw new common_1.ForbiddenException('You are not the owner of this store');
+        }
         await this.storesRepository.delete(id);
     }
 };

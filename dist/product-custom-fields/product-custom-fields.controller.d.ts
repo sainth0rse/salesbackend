@@ -5,7 +5,7 @@ export declare class ProductCustomFieldsController {
     constructor(customFieldsService: ProductCustomFieldsService);
     findAll(productId: string): Promise<ProductCustomField[]>;
     findOne(id: string): Promise<ProductCustomField>;
-    create(customField: Partial<ProductCustomField>): Promise<ProductCustomField>;
-    update(id: string, customField: Partial<ProductCustomField>): Promise<ProductCustomField>;
-    remove(id: string): Promise<void>;
+    create(customField: Partial<ProductCustomField>, req: Request): Promise<ProductCustomField>;
+    update(id: string, customField: Partial<ProductCustomField>, req: Request): Promise<ProductCustomField>;
+    remove(id: string, req: Request): Promise<void>;
 }

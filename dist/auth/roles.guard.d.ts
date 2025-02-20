@@ -4,6 +4,6 @@ declare const RolesGuard_base: import("@nestjs/passport").Type<import("@nestjs/p
 export declare class RolesGuard extends RolesGuard_base {
     private reflector;
     constructor(reflector: Reflector);
-    canActivate(context: ExecutionContext): boolean;
+    canActivate(context: ExecutionContext): boolean | Promise<boolean>;
 }
 export {};

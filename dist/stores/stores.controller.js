@@ -16,7 +16,7 @@ exports.StoresController = void 0;
 const common_1 = require("@nestjs/common");
 const stores_service_1 = require("./stores.service");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
-const ownership_guard_1 = require("../auth/ownership.guard");
+const ownership_guard_1 = require("../ownership/ownership.guard");
 let StoresController = class StoresController {
     constructor(storesService) {
         this.storesService = storesService;

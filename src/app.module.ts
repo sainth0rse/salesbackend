@@ -4,11 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
-import { StoresModule } from './stores/stores.module'; // Исправляем импорт
+import { StoresModule } from './stores/stores.module';
 import { StoreProductsModule } from './store-products/store-products.module';
 import { ProductCustomFieldsModule } from './product-custom-fields/product-custom-fields.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { OwnershipModule } from './ownership/ownership.module';
 
 @Module({
   imports: [
@@ -21,14 +22,15 @@ import { UsersModule } from './users/users.module';
       password: process.env.DATABASE_PASSWORD || 'postgres',
       database: process.env.DATABASE_NAME || 'salesstep_db',
       autoLoadEntities: true,
-      synchronize: true, // Отключить в продакшене
+      synchronize: true, // В продакшене лучше выключить
     }),
     ProductsModule,
-    StoresModule, // Используем исправленный импорт
+    StoresModule,
     StoreProductsModule,
     ProductCustomFieldsModule,
     AuthModule,
     UsersModule,
+    OwnershipModule,
   ],
   controllers: [AppController],
   providers: [AppService],

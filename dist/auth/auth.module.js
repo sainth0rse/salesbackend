@@ -17,11 +17,6 @@ const jwt_strategy_1 = require("./jwt.strategy");
 const config_1 = require("@nestjs/config");
 const users_module_1 = require("../users/users.module");
 const roles_guard_1 = require("./roles.guard");
-const ownership_guard_1 = require("./ownership.guard");
-const products_module_1 = require("../products/products.module");
-const stores_module_1 = require("../stores/stores.module");
-const store_products_module_1 = require("../store-products/store-products.module");
-const product_custom_fields_module_1 = require("../product-custom-fields/product-custom-fields.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -38,12 +33,12 @@ exports.AuthModule = AuthModule = __decorate([
                 inject: [config_1.ConfigService],
             }),
             config_1.ConfigModule,
-            products_module_1.ProductsModule,
-            stores_module_1.StoresModule,
-            store_products_module_1.StoreProductsModule,
-            product_custom_fields_module_1.ProductCustomFieldsModule,
         ],
-        providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy, roles_guard_1.RolesGuard, ownership_guard_1.OwnershipGuard],
+        providers: [
+            auth_service_1.AuthService,
+            jwt_strategy_1.JwtStrategy,
+            roles_guard_1.RolesGuard,
+        ],
         controllers: [auth_controller_1.AuthController],
     })
 ], AuthModule);

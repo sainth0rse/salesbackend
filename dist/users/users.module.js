@@ -12,18 +12,27 @@ const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("./entities/user.entity");
 const user_service_1 = require("./user.service");
 const user_controller_1 = require("./user.controller");
+const product_custom_field_entity_1 = require("../product-custom-fields/entities/product-custom-field.entity");
+const product_entity_1 = require("../products/entities/product.entity");
+const store_entity_1 = require("../stores/entities/store.entity");
+const store_product_entity_1 = require("../store-products/entities/store-product.entity");
 let UsersModule = class UsersModule {
 };
 exports.UsersModule = UsersModule;
 exports.UsersModule = UsersModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([user_entity_1.User])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([
+                user_entity_1.User,
+                product_custom_field_entity_1.ProductCustomField,
+                product_entity_1.Product,
+                store_entity_1.Store,
+                store_product_entity_1.StoreProduct,
+            ]),
+        ],
         providers: [user_service_1.UsersService],
         controllers: [user_controller_1.UsersController],
-        exports: [
-            user_service_1.UsersService,
-            typeorm_1.TypeOrmModule,
-        ],
+        exports: [user_service_1.UsersService, typeorm_1.TypeOrmModule],
     })
 ], UsersModule);
 //# sourceMappingURL=users.module.js.map

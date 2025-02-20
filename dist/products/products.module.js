@@ -13,12 +13,23 @@ const product_entity_1 = require("./entities/product.entity");
 const products_service_1 = require("./products.service");
 const products_controller_1 = require("./products.controller");
 const users_module_1 = require("../users/users.module");
+const ownership_module_1 = require("../ownership/ownership.module");
+const stores_module_1 = require("../stores/stores.module");
+const store_products_module_1 = require("../store-products/store-products.module");
+const product_custom_fields_module_1 = require("../product-custom-fields/product-custom-fields.module");
 let ProductsModule = class ProductsModule {
 };
 exports.ProductsModule = ProductsModule;
 exports.ProductsModule = ProductsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([product_entity_1.Product]), users_module_1.UsersModule],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([product_entity_1.Product]),
+            users_module_1.UsersModule,
+            (0, common_1.forwardRef)(() => ownership_module_1.OwnershipModule),
+            (0, common_1.forwardRef)(() => stores_module_1.StoresModule),
+            (0, common_1.forwardRef)(() => store_products_module_1.StoreProductsModule),
+            (0, common_1.forwardRef)(() => product_custom_fields_module_1.ProductCustomFieldsModule),
+        ],
         providers: [products_service_1.ProductsService],
         controllers: [products_controller_1.ProductsController],
         exports: [products_service_1.ProductsService],

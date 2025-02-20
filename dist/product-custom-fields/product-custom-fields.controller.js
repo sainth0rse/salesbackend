@@ -26,14 +26,17 @@ let ProductCustomFieldsController = class ProductCustomFieldsController {
     findOne(id) {
         return this.customFieldsService.findOne(+id);
     }
-    create(customField) {
-        return this.customFieldsService.create(customField);
+    create(customField, req) {
+        const user = req.user;
+        return this.customFieldsService.create(customField, user.id);
     }
-    update(id, customField) {
-        return this.customFieldsService.update(+id, customField);
+    update(id, customField, req) {
+        const user = req.user;
+        return this.customFieldsService.update(+id, customField, user.id);
     }
-    remove(id) {
-        return this.customFieldsService.remove(+id);
+    remove(id, req) {
+        const user = req.user;
+        return this.customFieldsService.remove(+id, user.id);
     }
 };
 exports.ProductCustomFieldsController = ProductCustomFieldsController;
@@ -54,23 +57,26 @@ __decorate([
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ProductCustomFieldsController.prototype, "create", null);
 __decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], ProductCustomFieldsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ProductCustomFieldsController.prototype, "remove", null);
 exports.ProductCustomFieldsController = ProductCustomFieldsController = __decorate([

@@ -52,6 +52,12 @@ let ProductsService = class ProductsService {
     }
     async remove(id, userId) {
         const product = await this.findOne(id);
+        if (!product.createdBy) {
+            throw new common_1.ForbiddenException('Product has no owner — cannot delete');
+        }
+        if (product.createdBy.id !== userId) {
+            throw new common_1.ForbiddenException('You are not the owner of this product');
+        }
         await this.productsRepository.delete(id);
     }
 };

@@ -15,26 +15,37 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 
+// Опционально: если нужно явно типизировать, добавляем интерфейс
+interface ExpressRequest extends Request {
+  user: { id: number };
+}
+
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async findAll(@Request() req): Promise<User[]> {
-    const user = req.user as { id: number };
+  async findAll(@Request() req: Request): Promise<User[]> {
+    const user = (req as ExpressRequest).user;
     return await this.usersService.findAll(user.id);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Request() req): Promise<User> {
-    const user = req.user as { id: number };
+  async findOne(
+    @Param('id') id: string,
+    @Request() req: Request,
+  ): Promise<User> {
+    const user = (req as ExpressRequest).user;
     return await this.usersService.findOne(+id, user.id);
   }
 
   @Post()
-  async create(@Body() user: Partial<User>, @Request() req): Promise<User> {
-    const userCreating = req.user as { id: number };
+  async create(
+    @Body() user: Partial<User>,
+    @Request() req: Request,
+  ): Promise<User> {
+    const userCreating = (req as ExpressRequest).user;
     return await this.usersService.create(user, userCreating.id);
   }
 
@@ -42,17 +53,20 @@ export class UsersController {
   async update(
     @Param('id') id: string,
     @Body() user: Partial<User>,
-    @Request() req,
+    @Request() req: Request,
   ): Promise<User> {
-    const userUpdating = req.user as { id: number };
+    const userUpdating = (req as ExpressRequest).user;
     return await this.usersService.update(+id, user, userUpdating.id);
   }
 
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles('admin') // Только админ может удалять пользователей
-  async remove(@Param('id') id: string, @Request() req): Promise<void> {
-    const userDeleting = req.user as { id: number };
+  async remove(
+    @Param('id') id: string,
+    @Request() req: Request,
+  ): Promise<void> {
+    const userDeleting = (req as ExpressRequest).user;
     await this.usersService.remove(+id, userDeleting.id);
   }
 }

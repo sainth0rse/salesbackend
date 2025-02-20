@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
@@ -9,6 +9,7 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productsRepository: Repository<Product>,
+
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
@@ -52,7 +53,17 @@ export class ProductsService {
   }
 
   async remove(id: number, userId: number): Promise<void> {
+    // Загружаем продукт
     const product = await this.findOne(id);
+
+    // Если хотите проверить владельца:
+    if (!product.createdBy) {
+      throw new ForbiddenException('Product has no owner — cannot delete');
+    }
+    if (product.createdBy.id !== userId) {
+      throw new ForbiddenException('You are not the owner of this product');
+    }
+
     await this.productsRepository.delete(id);
   }
 }

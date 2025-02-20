@@ -26,14 +26,17 @@ let StoreProductsController = class StoreProductsController {
     findOne(id) {
         return this.storeProductsService.findOne(+id);
     }
-    create(storeProduct) {
-        return this.storeProductsService.create(storeProduct);
+    create(storeProduct, req) {
+        const user = req.user;
+        return this.storeProductsService.create(storeProduct, user.id);
     }
-    update(id, storeProduct) {
-        return this.storeProductsService.update(+id, storeProduct);
+    update(id, storeProduct, req) {
+        const user = req.user;
+        return this.storeProductsService.update(+id, storeProduct, user.id);
     }
-    remove(id) {
-        return this.storeProductsService.remove(+id);
+    remove(id, req) {
+        const user = req.user;
+        return this.storeProductsService.remove(+id, user.id);
     }
 };
 exports.StoreProductsController = StoreProductsController;
@@ -53,23 +56,26 @@ __decorate([
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], StoreProductsController.prototype, "create", null);
 __decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], StoreProductsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], StoreProductsController.prototype, "remove", null);
 exports.StoreProductsController = StoreProductsController = __decorate([
