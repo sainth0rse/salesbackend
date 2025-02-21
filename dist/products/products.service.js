@@ -23,8 +23,14 @@ let ProductsService = class ProductsService {
         this.productsRepository = productsRepository;
         this.usersRepository = usersRepository;
     }
-    async findAll() {
-        return this.productsRepository.find({ relations: ['createdBy'] });
+    async findAll(userId, role) {
+        if (role === 'admin') {
+            return this.productsRepository.find({ relations: ['createdBy'] });
+        }
+        return this.productsRepository.find({
+            where: { createdBy: { id: userId } },
+            relations: ['createdBy'],
+        });
     }
     async findOne(id) {
         return this.productsRepository.findOneOrFail({
@@ -44,6 +50,9 @@ let ProductsService = class ProductsService {
     }
     async update(id, productData, userId) {
         const product = await this.findOne(id);
+        if (product.createdBy?.id !== userId) {
+            throw new common_1.ForbiddenException('You are not the owner of this product');
+        }
         const user = await this.usersRepository.findOneOrFail({
             where: { id: userId },
         });

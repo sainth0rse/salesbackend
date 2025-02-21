@@ -14,59 +14,85 @@ import { User } from './entities/user.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 // Опционально: если нужно явно типизировать, добавляем интерфейс
 interface ExpressRequest extends Request {
-  user: { id: number };
+  user: { id: number; role: string };
 }
 
+@ApiTags('users')
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async findAll(@Request() req: Request): Promise<User[]> {
-    const user = (req as ExpressRequest).user;
-    return await this.usersService.findAll(user.id);
+  @ApiOperation({
+    summary: 'Get all users (admin only) or current user (client)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Return list of users or current user',
+  })
+  @ApiBearerAuth()
+  async findAll(@Request() req: ExpressRequest): Promise<User[]> {
+    return await this.usersService.findAll(req.user.id);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiResponse({ status: 200, description: 'Return user details' })
+  @ApiResponse({ status: 403, description: 'Forbidden (not owner or admin)' })
+  @ApiBearerAuth()
   async findOne(
     @Param('id') id: string,
-    @Request() req: Request,
+    @Request() req: ExpressRequest,
   ): Promise<User> {
-    const user = (req as ExpressRequest).user;
-    return await this.usersService.findOne(+id, user.id);
+    return await this.usersService.findOne(+id, req.user.id);
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new user (admin only)' })
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden (not admin)' })
+  @ApiBearerAuth()
   async create(
     @Body() user: Partial<User>,
-    @Request() req: Request,
+    @Request() req: ExpressRequest,
   ): Promise<User> {
-    const userCreating = (req as ExpressRequest).user;
-    return await this.usersService.create(user, userCreating.id);
+    return await this.usersService.create(user, req.user.id);
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update user by ID' })
+  @ApiResponse({ status: 200, description: 'User updated successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden (not owner or admin)' })
+  @ApiBearerAuth()
   async update(
     @Param('id') id: string,
     @Body() user: Partial<User>,
-    @Request() req: Request,
+    @Request() req: ExpressRequest,
   ): Promise<User> {
-    const userUpdating = (req as ExpressRequest).user;
-    return await this.usersService.update(+id, user, userUpdating.id);
+    return await this.usersService.update(+id, user, req.user.id);
   }
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles('admin') // Только админ может удалять пользователей
+  @Roles('admin')
+  @ApiOperation({ summary: 'Delete user by ID (admin only)' })
+  @ApiResponse({ status: 204, description: 'User deleted successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden (not admin)' })
+  @ApiBearerAuth()
   async remove(
     @Param('id') id: string,
-    @Request() req: Request,
+    @Request() req: ExpressRequest,
   ): Promise<void> {
-    const userDeleting = (req as ExpressRequest).user;
-    await this.usersService.remove(+id, userDeleting.id);
+    await this.usersService.remove(+id, req.user.id);
   }
 }

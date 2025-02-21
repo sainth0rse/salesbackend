@@ -14,8 +14,14 @@ export class ProductsService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async findAll(): Promise<Product[]> {
-    return this.productsRepository.find({ relations: ['createdBy'] });
+  async findAll(userId: number, role: string): Promise<Product[]> {
+    if (role === 'admin') {
+      return this.productsRepository.find({ relations: ['createdBy'] });
+    }
+    return this.productsRepository.find({
+      where: { createdBy: { id: userId } },
+      relations: ['createdBy'],
+    });
   }
 
   async findOne(id: number): Promise<Product> {
@@ -45,6 +51,9 @@ export class ProductsService {
     userId: number,
   ): Promise<Product> {
     const product = await this.findOne(id);
+    if (product.createdBy?.id !== userId) {
+      throw new ForbiddenException('You are not the owner of this product');
+    }
     const user = await this.usersRepository.findOneOrFail({
       where: { id: userId },
     });

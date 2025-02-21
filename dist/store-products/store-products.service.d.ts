@@ -9,7 +9,7 @@ export declare class StoreProductsService {
     private productsRepository;
     private storesRepository;
     constructor(storeProductsRepository: Repository<StoreProduct>, usersRepository: Repository<User>, productsRepository: Repository<Product>, storesRepository: Repository<Store>);
-    findAll(): Promise<StoreProduct[]>;
+    findAll(userId: number, role: string): Promise<StoreProduct[]>;
     findOne(id: number): Promise<StoreProduct>;
     create(storeProductData: Partial<StoreProduct>, userId: number): Promise<StoreProduct>;
     update(id: number, storeProductData: Partial<StoreProduct>, userId: number): Promise<StoreProduct>;

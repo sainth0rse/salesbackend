@@ -16,6 +16,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
+const swagger_1 = require("@nestjs/swagger");
+const class_validator_1 = require("class-validator");
+class RegisterDto {
+}
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], RegisterDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(8),
+    __metadata("design:type", String)
+], RegisterDto.prototype, "password", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(['admin', 'client']),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], RegisterDto.prototype, "role", void 0);
+class LoginDto {
+}
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], LoginDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(8),
+    __metadata("design:type", String)
+], LoginDto.prototype, "password", void 0);
 let AuthController = AuthController_1 = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -51,19 +80,71 @@ let AuthController = AuthController_1 = class AuthController {
 exports.AuthController = AuthController;
 __decorate([
     (0, common_1.Post)('register'),
+    (0, swagger_1.ApiOperation)({ summary: 'Register a new user' }),
+    (0, swagger_1.ApiBody)({
+        type: RegisterDto,
+        description: 'User registration data',
+        examples: {
+            default: {
+                value: {
+                    email: 'user@h0rse.com',
+                    password: 'user123',
+                    role: 'client',
+                },
+            },
+        },
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 201,
+        description: 'User registered successfully',
+        type: Object,
+    }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid input data' }),
+    (0, swagger_1.ApiResponse)({ status: 500, description: 'Registration failed' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [RegisterDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "register", null);
 __decorate([
     (0, common_1.Post)('login'),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Login user with email and password to get JWT token',
+    }),
+    (0, swagger_1.ApiBody)({
+        type: LoginDto,
+        description: 'User login credentials',
+        examples: {
+            default: {
+                value: {
+                    email: 'user@h0rse.com',
+                    password: 'user123',
+                },
+            },
+        },
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Returns JWT access token',
+        schema: {
+            type: 'object',
+            properties: {
+                accessToken: {
+                    type: 'string',
+                    example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAaDByc2UuY29tIiwic3ViIjo4LCJyb2xlIjoiY2xpZW50IiwiaWF0IjoxNzQwMTI3MjYyLCJleHAiOjE3NDAxMzA4NjJ9.L-8h1Lout5LrbWaDm1ggSfIDIgWNmEihBSPXNft_npE',
+                },
+            },
+        },
+    }),
+    (0, swagger_1.ApiResponse)({ status: 401, description: 'Invalid credentials' }),
+    (0, swagger_1.ApiResponse)({ status: 500, description: 'Login failed' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [LoginDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 exports.AuthController = AuthController = AuthController_1 = __decorate([
+    (0, swagger_1.ApiTags)('auth'),
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);

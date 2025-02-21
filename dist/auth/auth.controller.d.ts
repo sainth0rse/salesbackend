@@ -1,17 +1,20 @@
 import { AuthService } from './auth.service';
+declare class RegisterDto {
+    email: string;
+    password: string;
+    role?: 'admin' | 'client';
+}
+declare class LoginDto {
+    email: string;
+    password: string;
+}
 export declare class AuthController {
     private authService;
     private readonly logger;
     constructor(authService: AuthService);
-    register(body: {
-        email: string;
-        password: string;
-        role?: string;
-    }): Promise<import("../users/entities/user.entity").User>;
-    login(body: {
-        email: string;
-        password: string;
-    }): Promise<{
+    register(body: RegisterDto): Promise<import("../users/entities/user.entity").User>;
+    login(body: LoginDto): Promise<{
         accessToken: string;
     }>;
 }
+export {};

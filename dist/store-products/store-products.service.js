@@ -27,8 +27,14 @@ let StoreProductsService = class StoreProductsService {
         this.productsRepository = productsRepository;
         this.storesRepository = storesRepository;
     }
-    async findAll() {
+    async findAll(userId, role) {
+        if (role === 'admin') {
+            return this.storeProductsRepository.find({
+                relations: ['product', 'store', 'createdBy'],
+            });
+        }
         return this.storeProductsRepository.find({
+            where: { createdBy: { id: userId } },
             relations: ['product', 'store', 'createdBy'],
         });
     }
@@ -44,13 +50,25 @@ let StoreProductsService = class StoreProductsService {
     }
     async create(storeProductData, userId) {
         const { productId, storeId, stock } = storeProductData;
-        const product = await this.productsRepository.findOneBy({ id: productId });
+        const product = await this.productsRepository.findOne({
+            where: { id: productId },
+            relations: ['createdBy'],
+        });
         if (!product) {
             throw new common_1.NotFoundException(`Product with ID ${productId} not found`);
         }
-        const store = await this.storesRepository.findOneBy({ id: storeId });
+        if (!product.createdBy || product.createdBy.id !== userId) {
+            throw new common_1.ForbiddenException('You can only link your own products');
+        }
+        const store = await this.storesRepository.findOne({
+            where: { id: storeId },
+            relations: ['createdBy'],
+        });
         if (!store) {
             throw new common_1.NotFoundException(`Store with ID ${storeId} not found`);
+        }
+        if (!store.createdBy || store.createdBy.id !== userId) {
+            throw new common_1.ForbiddenException('You can only link your own stores');
         }
         const user = await this.usersRepository.findOneOrFail({
             where: { id: userId },
@@ -68,6 +86,10 @@ let StoreProductsService = class StoreProductsService {
         const user = await this.usersRepository.findOneOrFail({
             where: { id: userId },
         });
+        if (!existingStoreProduct.createdBy ||
+            existingStoreProduct.createdBy.id !== userId) {
+            throw new common_1.ForbiddenException('You are not the owner of this store product');
+        }
         Object.assign(existingStoreProduct, storeProductData, { createdBy: user });
         await this.storeProductsRepository.update(id, existingStoreProduct);
         return this.findOne(id);

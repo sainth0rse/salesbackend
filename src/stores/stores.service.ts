@@ -9,13 +9,18 @@ export class StoresService {
   constructor(
     @InjectRepository(Store)
     private storesRepository: Repository<Store>,
-
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
 
-  async findAll(): Promise<Store[]> {
-    return this.storesRepository.find({ relations: ['createdBy'] });
+  async findAll(userId: number, role: string): Promise<Store[]> {
+    if (role === 'admin') {
+      return this.storesRepository.find({ relations: ['createdBy'] });
+    }
+    return this.storesRepository.find({
+      where: { createdBy: { id: userId } },
+      relations: ['createdBy'],
+    });
   }
 
   async findOne(id: number): Promise<Store> {
@@ -42,6 +47,9 @@ export class StoresService {
     userId: number,
   ): Promise<Store> {
     const store = await this.findOne(id);
+    if (store.createdBy?.id !== userId) {
+      throw new ForbiddenException('You are not the owner of this store');
+    }
     const user = await this.usersRepository.findOneOrFail({
       where: { id: userId },
     });
@@ -51,15 +59,12 @@ export class StoresService {
 
   async remove(id: number, userId: number): Promise<void> {
     const store = await this.findOne(id);
-
-    // Если нужно проверять владельца:
     if (!store.createdBy) {
       throw new ForbiddenException('Store has no owner — cannot delete');
     }
     if (store.createdBy.id !== userId) {
       throw new ForbiddenException('You are not the owner of this store');
     }
-
     await this.storesRepository.delete(id);
   }
 }
